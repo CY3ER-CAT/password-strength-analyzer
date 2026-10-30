@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#04070d">
+  <meta name="description" content="A local-first password strength analyzer. Score entropy, spot weak patterns, and generate strong passwords without your input ever leaving the browser.">
+  <title>CY3ER-CAT — Password Strength Analyzer</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%23050b13'/%3E%3Cpath d='M12 4 6 6.5v4.7c0 3.8 2.5 6.9 6 8.3 3.5-1.4 6-4.5 6-8.3V6.5L12 4Z' fill='none' stroke='%233dffb0' stroke-width='1.6'/%3E%3Cpath d='m9.4 11.8 1.8 1.8 3.4-3.5' fill='none' stroke='%233dffb0' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- Icon sprite -->
+  <svg class="sprite" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+    <symbol id="i-shield" viewBox="0 0 24 24">
+      <path d="M12 3 5 5.8v5.4c0 4.4 2.9 7.9 7 9.8 4.1-1.9 7-5.4 7-9.8V5.8L12 3Z"/>
+      <path d="m9 12 2.1 2.1L15.4 10"/>
+    </symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24">
+      <rect x="4.5" y="10" width="15" height="10.5" rx="2.5"/>
+      <path d="M8 10V7.5a4 4 0 0 1 8 0V10"/>
+      <path d="M12 14v2.5"/>
+    </symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24">
+      <path d="M2.4 12S5.7 5.9 12 5.9 21.6 12 21.6 12 18.3 18.1 12 18.1 2.4 12 2.4 12Z"/>
+      <circle cx="12" cy="12" r="2.9"/>
+    </symbol>
+    <symbol id="i-eye-off" viewBox="0 0 24 24">
+      <path d="M4.2 7.1C2.9 8.7 2.4 12 2.4 12s3.3 6.1 9.6 6.1c1.5 0 2.9-.3 4.1-.9"/>
+      <path d="M9.4 5.3A10 10 0 0 1 12 4.9c6.3 0 9.6 7.1 9.6 7.1a17 17 0 0 1-2.3 3.2"/>
+      <path d="M9.9 9.9a2.9 2.9 0 0 0 4.1 4.1"/>
+      <path d="m4 4 16 16"/>
+    </symbol>
+    <symbol id="i-x" viewBox="0 0 24 24">
+      <path d="M6 6l12 12M18 6 6 18"/>
+    </symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24">
+      <rect x="9" y="9" width="11" height="11" rx="2.5"/>
+      <path d="M15 9V6.5A2.5 2.5 0 0 0 12.5 4H6.5A2.5 2.5 0 0 0 4 6.5v6A2.5 2.5 0 0 0 6.5 15H9"/>
+    </symbol>
+    <symbol id="i-check" viewBox="0 0 24 24">
+      <path d="m5 12.5 4.5 4.5L19 6.5"/>
+    </symbol>
+    <symbol id="i-spark" viewBox="0 0 24 24">
+      <path d="M12 3.5 13.8 9 19.5 10.8 13.8 12.6 12 18.2 10.2 12.6 4.5 10.8 10.2 9 12 3.5Z"/>
+      <path d="M18.5 16.5v3M17 18h3"/>
+    </symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="8.3"/>
+      <path d="M12 7.5V12l3 1.8"/>
+    </symbol>
+    <symbol id="i-wave" viewBox="0 0 24 24">
+      <path d="M3 12h3.2l2.2-5.6 3.8 11 2.5-7.4L16.6 12H21"/>
+    </symbol>
+    <symbol id="i-hash" viewBox="0 0 24 24">
+      <path d="M9.5 4 7.8 20M16.2 4l-1.7 16M4.5 8.7h15M3.8 15.3h15"/>
+    </symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24">
+      <path d="M12 4.5 21 20H3L12 4.5Z"/>
+      <path d="M12 9.3v4.8M12 17.2v.1"/>
+    </symbol>
+    <symbol id="i-info" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="8.5"/>
+      <path d="M12 10.7v5M12 7.7v.1"/>
+    </symbol>
+    <symbol id="i-key" viewBox="0 0 24 24">
+      <circle cx="8" cy="15.5" r="3.5"/>
+      <path d="m10.6 13 7.4-7.4M15.5 8l2 2M13 10.5l2 2"/>
+    </symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24">
+      <path d="M20 11a8 8 0 1 0-2.3 6.3"/>
+      <path d="M20 5v6h-6"/>
+    </symbol>
+  </svg>
+
+  <!-- Ambient background -->
+  <div class="backdrop" aria-hidden="true">
+    <span class="orb orb--mint"></span>
+    <span class="orb orb--blue"></span>
+    <span class="orb orb--deep"></span>
+    <span class="backdrop__grid"></span>
+    <span class="backdrop__grain"></span>
+  </div>
+
+  <header class="topbar">
+    <div class="wrap topbar__inner">
+      <a class="brand" href="#top" aria-label="CY3ER-CAT Password Lab — back to top">
+        <span class="brand__mark"><svg class="icon"><use href="#i-shield"></use></svg></span>
+        <span class="brand__text">
+          <strong>CY3ER-CAT</strong>
+          <small>Password Lab</small>
+        </span>
+      </a>
+      <nav class="topbar__nav" aria-label="Primary">
+        <a href="#analyze">Analyzer</a>
+        <a href="#learn">Field notes</a>
+      </nav>
+      <span class="status"><span class="status__dot"></span> Local engine</span>
+    </div>
+  </header>
+
+  <main id="top">
+    <!-- Hero -->
+    <section class="hero wrap" aria-labelledby="hero-title">
+      <p class="eyebrow"><span class="eyebrow__dot"></span> Local-first password intelligence</p>
+      <h1 id="hero-title">Know exactly how <span class="grad">strong</span><br class="hero__break"> your password really is.</h1>
+      <p class="lede">Score entropy, expose weak patterns, and forge safer alternatives — all inside this tab. Nothing you type is stored, logged, or sent anywhere.</p>
+      <ul class="trust-row" aria-label="Privacy guarantees">
+        <li><svg class="icon"><use href="#i-check"></use></svg> 100% client-side</li>
+        <li><svg class="icon"><use href="#i-check"></use></svg> Zero network calls</li>
+        <li><svg class="icon"><use href="#i-check"></use></svg> Nothing stored</li>
+      </ul>
+    </section>
+
+    <!-- Dashboard -->
+    <div class="wrap dashboard" id="analyze">
+
+      <!-- Analyzer -->
+      <article class="card card--analyzer" id="analyzer-card" data-strength="none" aria-labelledby="analyzer-title">
+        <header class="card__head">
+          <div>
+            <p class="kicker"><span>01</span> Inspector</p>
+            <h2 id="analyzer-title">Password under test</h2>
+          </div>
+          <span class="badge"><svg class="icon"><use href="#i-lock"></use></svg> Stays in this tab</span>
+        </header>
+
+        <form class="analyze-form" id="analyze-form" autocomplete="off" novalidate>
+          <label class="sr-only" for="password">Password to analyze</label>
+          <div class="field" id="password-field">
+            <svg class="field__lead icon" aria-hidden="true"><use href="#i-lock"></use></svg>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              placeholder="Type or paste a password…"
+              autocomplete="new-password"
+              autocapitalize="off"
+              autocorrect="off"
+              spellcheck="false"
+              maxlength="128"
+              aria-describedby="privacy-note"
+              data-1p-ignore
+              data-lpignore="true">
+            <button class="icon-btn" type="button" id="toggle-visibility" aria-label="Show password" aria-pressed="false" title="Show password">
+              <svg class="icon"><use id="visibility-icon" href="#i-eye"></use></svg>
+            </button>
+            <button class="icon-btn field__clear" type="button" id="clear-password" aria-label="Clear password" title="Clear password">
+              <svg class="icon"><use href="#i-x"></use></svg>
+            </button>
+          </div>
+        </form>
+        <p class="privacy-note" id="privacy-note">
+          <span class="privacy-note__dot"></span>
+          Analyzed in memory only — never stored, logged, or transmitted.
+        </p>
+
+        <div class="score-panel">
+          <div class="dial" aria-hidden="true">
+            <svg viewBox="0 0 120 120">
+              <circle class="dial__track" cx="60" cy="60" r="52"></circle>
+              <circle class="dial__progress" id="dial-progress" cx="60" cy="60" r="52"></circle>
+            </svg>
+            <div class="dial__value">
+              <span id="score-value">0</span>
+              <span class="dial__max">/ 100</span>
+            </div>
+          </div>
+
+          <div class="score-body">
+            <div class="score-head">
+              <h3 class="score-label" id="strength-label" aria-live="polite">Awaiting input</h3>
+              <span class="score-hint" id="strength-hint">Start typing to begin</span>
+            </div>
+
+            <div class="segments" id="segments" role="progressbar" aria-label="Password strength score" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+              <span></span><span></span><span></span><span></span><span></span>
+            </div>
+            <div class="segment-labels" aria-hidden="true">
+              <span>Very weak</span><span>Weak</span><span>Medium</span><span>Strong</span><span>Very strong</span>
+            </div>
+
+            <div class="metrics">
+              <div class="metric">
+                <span class="metric__label"><svg class="icon"><use href="#i-wave"></use></svg> Entropy</span>
+                <span class="metric__value"><b id="entropy-value">0</b> bits</span>
+              </div>
+              <div class="metric">
+                <span class="metric__label"><svg class="icon"><use href="#i-clock"></use></svg> Crack time</span>
+                <span class="metric__value metric__value--time" id="crack-value">—</span>
+              </div>
+              <div class="metric">
+                <span class="metric__label"><svg class="icon"><use href="#i-hash"></use></svg> Unique</span>
+                <span class="metric__value"><b id="unique-value">0</b> chars</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p class="verdict" id="verdict">
+          <svg class="icon" aria-hidden="true"><use href="#i-info"></use></svg>
+          <span id="verdict-text">Enter a password to see a plain-language verdict and tailored fixes.</span>
+        </p>
+
+        <section class="checklist-block" aria-labelledby="checklist-title">
+          <div class="block-head">
+            <h3 id="checklist-title">Security checklist</h3>
+            <span class="count" id="checks-count">0 / 7</span>
+          </div>
+          <ul class="checklist" id="checklist">
+            <li data-check="length"><span class="checklist__icon" aria-hidden="true"></span><span>At least 12 characters</span></li>
+            <li data-check="upper"><span class="checklist__icon" aria-hidden="true"></span><span>Contains uppercase letters</span></li>
+            <li data-check="lower"><span class="checklist__icon" aria-hidden="true"></span><span>Contains lowercase letters</span></li>
+            <li data-check="number"><span class="checklist__icon" aria-hidden="true"></span><span>Contains numbers</span></li>
+            <li data-check="special"><span class="checklist__icon" aria-hidden="true"></span><span>Contains special characters</span></li>
+            <li data-check="common"><span class="checklist__icon" aria-hidden="true"></span><span>Not a common password</span></li>
+            <li data-check="patterns"><span class="checklist__icon" aria-hidden="true"></span><span>No obvious predictable patterns</span></li>
+          </ul>
+        </section>
+      </article>
+
+      <!-- Side column -->
+      <div class="side">
+
+        <!-- Generator -->
+        <article class="card card--generator" aria-labelledby="generator-title">
+          <header class="card__head">
+            <div>
+              <p class="kicker"><span>02</span> Forge</p>
+              <h2 id="generator-title">Strong password generator</h2>
+            </div>
+            <span class="badge badge--quiet"><svg class="icon"><use href="#i-spark"></use></svg> CSPRNG</span>
+          </header>
+
+          <div class="output">
+            <code id="generated-password" class="is-placeholder">Preparing a secure sample…</code>
+            <button class="copy-btn" id="copy-password" type="button" aria-label="Copy generated password" disabled>
+              <svg class="icon"><use id="copy-icon" href="#i-copy"></use></svg>
+              <span id="copy-label">Copy</span>
+            </button>
+          </div>
+          <p class="output-meta" id="generated-meta-row">
+            <span class="output-meta__dot"></span>
+            <span id="generated-meta">Generating…</span>
+          </p>
+
+          <div class="slider-block">
+            <div class="slider-head">
+              <label for="password-length">Length</label>
+              <output id="length-value" for="password-length">20</output>
+            </div>
+            <input type="range" id="password-length" min="8" max="64" value="20" step="1" aria-label="Generated password length">
+            <div class="slider-scale" aria-hidden="true"><span>8</span><span>24</span><span>40</span><span>64</span></div>
+          </div>
+
+          <fieldset class="options">
+            <legend>Character sets</legend>
+            <div class="options__grid">
+              <label class="option">
+                <input type="checkbox" id="opt-uppercase" checked>
+                <span class="option__box"><svg class="icon"><use href="#i-check"></use></svg></span>
+                <span class="option__label">Uppercase</span>
+                <span class="option__sample" aria-hidden="true">A–Z</span>
+              </label>
+              <label class="option">
+                <input type="checkbox" id="opt-lowercase" checked>
+                <span class="option__box"><svg class="icon"><use href="#i-check"></use></svg></span>
+                <span class="option__label">Lowercase</span>
+                <span class="option__sample" aria-hidden="true">a–z</span>
+              </label>
+              <label class="option">
+                <input type="checkbox" id="opt-numbers" checked>
+                <span class="option__box"><svg class="icon"><use href="#i-check"></use></svg></span>
+                <span class="option__label">Numbers</span>
+                <span class="option__sample" aria-hidden="true">0–9</span>
+              </label>
+              <label class="option">
+                <input type="checkbox" id="opt-symbols" checked>
+                <span class="option__box"><svg class="icon"><use href="#i-check"></use></svg></span>
+                <span class="option__label">Symbols</span>
+                <span class="option__sample" aria-hidden="true">!@#</span>
+              </label>
+            </div>
+          </fieldset>
+
+          <label class="switch-row">
+            <span class="switch-row__text">
+              <b>Exclude look-alikes</b>
+              <small>0 O 1 l I</small>
+            </span>
+            <input type="checkbox" id="exclude-ambiguous">
+            <span class="switch" aria-hidden="true"></span>
+          </label>
+
+          <button class="btn btn--primary" id="generate-password" type="button">
+            <svg class="icon"><use href="#i-spark"></use></svg>
+            Generate password
+          </button>
+          <button class="btn btn--ghost" id="analyze-generated" type="button" disabled>
+            <svg class="icon"><use href="#i-refresh"></use></svg>
+            Analyze this password
+          </button>
+        </article>
+
+        <!-- Coach -->
+        <article class="card card--coach" aria-labelledby="coach-title">
+          <header class="card__head">
+            <div>
+              <p class="kicker"><span>03</span> Coach</p>
+              <h2 id="coach-title">Recommendations</h2>
+            </div>
+          </header>
+
+          <ul class="suggestions" id="suggestions">
+            <li class="suggestion suggestion--empty">
+              <span class="suggestion__icon" aria-hidden="true"><svg class="icon"><use href="#i-key"></use></svg></span>
+              <p>Type a password above and tailored fixes will appear here.</p>
+            </li>
+          </ul>
+
+          <div class="coach-tip">
+            <svg class="icon" aria-hidden="true"><use href="#i-info"></use></svg>
+            <p><b>Length beats complexity.</b> Four unrelated words can be both easier to remember and harder to crack than a short jumble.</p>
+          </div>
+        </article>
+      </div>
+    </div>
+
+    <!-- Education -->
+    <section class="learn wrap" id="learn" aria-labelledby="learn-title">
+      <div class="section-head">
+        <p class="kicker"><span>04</span> Field notes</p>
+        <h2 id="learn-title">The thinking behind the score</h2>
+        <p class="section-head__lede">A quick, honest primer on what actually protects a password — and what the numbers can and cannot tell you.</p>
+      </div>
+
+      <div class="learn-grid">
+        <article class="learn-card">
+          <span class="learn-card__no">01</span>
+          <h3>What makes a password secure?</h3>
+          <p>Three things matter most: enough length, genuine unpredictability, and exclusivity. Complexity helps, but a long, random password beats a short, clever one. The practical answer is to let a password manager create and remember a unique secret for every account.</p>
+        </article>
+
+        <article class="learn-card">
+          <span class="learn-card__no">02</span>
+          <h3>What is password entropy?</h3>
+          <p>Entropy measures uncertainty in bits. Every extra bit doubles the number of guesses an attacker needs. The simple estimate below assumes a password is generated randomly — human-chosen substitutions and words collapse that number dramatically.</p>
+          <div class="formula" aria-label="Entropy formula: E equals L times log base 2 of N">E = L × log<sub>2</sub>(N)</div>
+        </article>
+
+        <article class="learn-card">
+          <span class="learn-card__no">03</span>
+          <h3>Why are longer passwords better?</h3>
+          <p>Each added character multiplies the search space. Going from 8 to 12 characters is not a 50% improvement — it can mean billions of times more guessing work. A four-to-six-word passphrase can reach that safety margin while staying memorable.</p>
+        </article>
+
+        <article class="learn-card">
+          <span class="learn-card__no">04</span>
+          <h3>Why should passwords be unique?</h3>
+          <p>Breaches happen at the server, not at your keyboard. When one site leaks, attackers replay that email-and-password pair across banking, email, and social accounts — an attack called credential stuffing. Reuse turns a single breach into many compromised accounts.</p>
+        </article>
+
+        <article class="learn-card">
+          <span class="learn-card__no">05</span>
+          <h3>What is brute-force cracking?</h3>
+          <p>Brute force tries every possible combination. A modern GPU can test billions of candidates per second offline, and dictionary rules try common words, names, and substitutions first. That is why length and true randomness matter more than clever-looking character swaps.</p>
+        </article>
+
+        <article class="learn-card">
+          <span class="learn-card__no">06</span>
+          <h3>Why should you enable MFA?</h3>
+          <p>Multi-factor authentication adds a second proof — an app code, passkey, or security key — so a leaked password alone is not enough. Prefer phishing-resistant methods such as passkeys or hardware keys; SMS codes help, but are weaker. Save your recovery codes somewhere safe.</p>
+        </article>
+      </div>
+
+      <aside class="disclaimer" aria-label="Important disclaimer">
+        <svg class="icon" aria-hidden="true"><use href="#i-alert"></use></svg>
+        <p><b>An estimate, not a guarantee.</b> The score and crack-time figures are educational approximations. Crack time assumes an offline attacker testing 10 billion guesses per second against a randomly composed password; real attacks also exploit reuse, phishing, leaks, and weak server practices. A perfect score cannot protect an account that is reused or phished.</p>
+      </aside>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap footer__inner">
+      <p><span class="footer__brand">CY3ER-CAT</span> Password Lab <span class="footer__sep">·</span> Built for learning</p>
+      <p class="footer__privacy"><svg class="icon" aria-hidden="true"><use href="#i-lock"></use></svg> No passwords leave this browser.</p>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast" role="status" aria-live="polite">
+    <span class="toast__icon" aria-hidden="true"><svg class="icon"><use href="#i-check"></use></svg></span>
+    <span id="toast-text"></span>
+  </div>
+
+  <script src="js/wordlist.js"></script>
+  <script src="js/analyzer.js"></script>
+  <script src="js/generator.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
