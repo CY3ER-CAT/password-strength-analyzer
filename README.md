@@ -1,18 +1,20 @@
-# CY3ER-CAT — Password Strength Analyzer
+# 🐱 CY3ER-CAT — Password Strength Analyzer
+
+> 🛡️ Local-first. 🔒 Private by design. ⚡ Zero dependencies.
 
 A local-first, cybersecurity-themed password strength analyzer built with plain **HTML5, CSS3, and JavaScript**. It scores passwords from 0–100, estimates entropy and offline crack time, flags common passwords and predictable patterns, provides tailored fixes, and generates cryptographically secure alternatives.
 
-Everything runs in the browser. **No backend, no build step, no external libraries, no network requests, no storage, and no console logging of passwords.**
+Everything runs in the browser. **No backend, no build step, no external libraries, no network requests, no storage, and no console logging of passwords.** 🚫🌐
 
 ---
 
-## Features
+## ✨ Features
 
-### Analysis
-- Live strength score from **0–100** with five levels: Very weak → Very strong.
-- Length, uppercase, lowercase, number, and symbol detection.
-- Local common-password wordlist with leet-speak normalisation (`P@ssw0rd` is caught).
-- Detection of:
+### 🔍 Analysis
+- ✅ Live strength score from **0–100** with five levels: Very weak → Very strong.
+- 🔤 Length, uppercase, lowercase, number, and symbol detection.
+- 📚 Local common-password wordlist with leet-speak normalisation (`P@ssw0rd` is caught).
+- 🧠 Detection of:
   - repeated characters (`aaaa`)
   - repeated blocks (`abcabcabc`)
   - sequential runs (`abcd`, `4321`)
@@ -23,38 +25,38 @@ Everything runs in the browser. **No backend, no build step, no external librari
   - phone-number formats with separators
   - name-like prefixes followed by digits or symbols (`Alex@...`)
   - dictionary words embedded in longer passwords
-- Pattern penalties scale with how much of the password the pattern covers, so a short repeated run inside a long password does not collapse the score.
-- Educational entropy estimate and crack-time projection.
-- Plain-language verdict explaining *why* a password is weak or strong.
-- Real-time seven-point security checklist.
-- Actionable, prioritised recommendations.
+- 📈 Pattern penalties scale with how much of the password the pattern covers, so a short repeated run inside a long password does not collapse the score.
+- 📊 Educational entropy estimate and crack-time projection.
+- 💬 Plain-language verdict explaining *why* a password is weak or strong.
+- ☑️ Real-time seven-point security checklist.
+- 🛠️ Actionable, prioritised recommendations.
 
-### Generator
-- Uses `crypto.getRandomValues()` with rejection sampling — **not** `Math.random()`.
-- Customisable length (8–64).
-- Uppercase, lowercase, numbers, and symbol sets.
-- Optional exclusion of look-alike characters (`0 O 1 l I`).
-- One-click copy and a shortcut to analyze the generated password.
+### 🔐 Generator
+- 🎲 Uses `crypto.getRandomValues()` with rejection sampling — **not** `Math.random()`.
+- 📏 Customisable length (8–64).
+- 🔠 Uppercase, lowercase, numbers, and symbol sets.
+- 🚫 Optional exclusion of look-alike characters (`0 O 1 l I`).
+- 📋 One-click copy and a shortcut to analyze the generated password.
 
-### Interface
-- Dark navy/black theme with neon green and cyan accents.
-- Glassmorphism cards, ambient orbs, subtle grid and grain.
-- Animated score dial and five-segment strength meter.
-- Responsive layout for desktop, tablet, and mobile.
-- Keyboard accessible, reduced-motion support, visible focus states.
-- No external fonts, images, trackers, or API calls.
+### 🎨 Interface
+- 🌑 Dark navy/black theme with neon green and cyan accents.
+- 💎 Glassmorphism cards, ambient orbs, subtle grid and grain.
+- 📈 Animated score dial and five-segment strength meter.
+- 📱 Responsive layout for desktop, tablet, and mobile.
+- ♿ Keyboard accessible, reduced-motion support, visible focus states.
+- 🚫 No external fonts, images, trackers, or API calls.
 
-### Privacy
-- Analysis happens entirely in memory in the current tab.
-- Passwords are **never** written to `localStorage`, `sessionStorage`, cookies, or IndexedDB.
-- Passwords are **never** sent to an API.
-- Passwords are **never** logged to the console.
-- The clipboard is only touched when you explicitly press **Copy** on a generated password.
-- Clear the analyzed password at any time with the **×** button.
+### 🛡️ Privacy
+- 🧠 Analysis happens entirely in memory in the current tab.
+- 🚫 Passwords are **never** written to `localStorage`, `sessionStorage`, cookies, or IndexedDB.
+- 📡 Passwords are **never** sent to an API.
+- 🖥️ Passwords are **never** logged to the console.
+- 📋 The clipboard is only touched when you explicitly press **Copy** on a generated password.
+- 🧹 Clear the analyzed password at any time with the **×** button.
 
 ---
 
-## Project structure
+## 📁 Project structure
 
 ```
 password-strength-analyzer/
@@ -73,9 +75,9 @@ The scripts are loaded as classic scripts in dependency order, so the project wo
 
 ---
 
-## Run it locally
+## 🚀 Run it locally
 
-### Option 1 — Open the file directly (simplest)
+### ⚡ Option 1 — Open the file directly (simplest)
 
 1. Download or clone the project.
 2. Double-click `index.html`, or drag it into your browser.
@@ -84,7 +86,7 @@ No installation, server, or internet connection required.
 
 > Clipboard access is most reliable over `http://localhost`. If it is unavailable, the app falls back to a legacy copy method.
 
-### Option 2 — Serve with Python
+### 🐍 Option 2 — Serve with Python
 
 From the project folder:
 
@@ -98,7 +100,7 @@ py -m http.server 8080
 
 Then open [http://localhost:8080](http://localhost:8080).
 
-### Option 3 — Serve with Node.js
+### 🟢 Option 3 — Serve with Node.js
 
 ```bash
 npx serve .
@@ -108,22 +110,22 @@ Then open the printed local URL.
 
 ---
 
-## How to use
+## 🕹️ How to use
 
-1. Type or paste a password into **Password under test**.
-2. Watch the score dial, meter, metrics, checklist, and recommendations update live.
-3. Use the eye button to reveal the password and the **×** button to clear it.
-4. Use the **generator** to create a strong alternative, adjust its length and character sets, then copy it.
-5. Press **Analyze this password** to load the generated password into the inspector and compare its score.
-6. Read **Field notes** for the security concepts behind the score.
+1. 🔤 Type or paste a password into **Password under test**.
+2. 👀 Watch the score dial, meter, metrics, checklist, and recommendations update live.
+3. 👁️ Use the eye button to reveal the password and the **×** button to clear it.
+4. ⚙️ Use the **generator** to create a strong alternative, adjust its length and character sets, then copy it.
+5. 🔍 Press **Analyze this password** to load the generated password into the inspector and compare its score.
+6. 📚 Read **Field notes** for the security concepts behind the score.
 
 The score updates **250 ms after the last keystroke**, not on every character. While you are still typing, a shorter prefix can look stronger than the finished password: adding an eighth digit to a name-and-number password, for example, completes a phone/ID pattern and can lower the score. The **final, full password** is the meaningful result.
 
 ---
 
-## How the score works
+## 🧮 How the score works
 
-### Point model
+### 📊 Point model
 
 A baseline score is built from:
 
@@ -157,13 +159,13 @@ Bands:
 
 | Score | Level |
 |---|---|
-| 0–19 | Very weak |
-| 20–39 | Weak |
-| 40–59 | Medium |
-| 60–79 | Strong |
-| 80–100 | Very strong |
+| 0–19 | 💀 Very weak |
+| 20–39 | ⚠️ Weak |
+| 40–59 | 🟡 Medium |
+| 60–79 | 🟢 Strong |
+| 80–100 | 💎 Very strong |
 
-### Entropy
+### 🎲 Entropy
 
 The estimate is:
 
@@ -173,23 +175,23 @@ E = L × log₂(N)
 
 where `L` is the password length and `N` is the size of the observed character pool (lowercase 26, uppercase 26, digits 10, symbols 33). Predictable structures reduce the displayed estimate, because raw combinations assume a randomly generated password.
 
-### Crack time
+### ⏱️ Crack time
 
 Crack time is derived from the effective entropy estimate, assuming an **offline attacker testing 10 billion guesses per second** and an average of half the keyspace. It is an educational baseline, not a prediction for a specific attacker or service.
 
-### Why the score is only an estimate
+### 🤔 Why the score is only an estimate
 
 Entropy math assumes random character selection. People choose patterns — words, names, dates, keyboard walks — that dramatically shrink the real search space. A high score does **not** mean an account cannot be compromised through phishing, password reuse, malware, or a server-side breach.
 
 ---
 
-## Customising
+## 🛠️ Customising
 
-### Add to the wordlist
+### 📝 Add to the wordlist
 
 Edit `js/wordlist.js` and append lowercase entries to `COMMON_PASSWORDS`. The analyzer normalises case, symbols, and common leet substitutions before matching, so `P@ssw0rd2026` will still match `password`.
 
-### Change the generator character sets
+### 🔤 Change the generator character sets
 
 Edit the `SETS` object in `js/generator.js`:
 
@@ -204,17 +206,17 @@ var SETS = {
 
 Keep the Web Crypto rejection-sampling logic intact so every character remains uniformly distributed.
 
-### Change the scoring weights
+### ⚖️ Change the scoring weights
 
 All scoring rules live in `analyze()` inside `js/analyzer.js` and are commented by section. Adjust the length multiplier, variety points, penalties, or caps there. The UI updates automatically.
 
-### Change the colour system
+### 🎨 Change the colour system
 
 Design tokens are declared at the top of `css/styles.css` under `:root`. Strength colours are mapped through the `--tone` variable and the `data-strength` attribute on the analyzer card.
 
 ---
 
-## Security design notes
+## 🔒 Security design notes
 
 - **No network calls.** There is no `fetch`, `XMLHttpRequest`, WebSocket, analytics, or external asset.
 - **No persistence.** There is no `localStorage`, `sessionStorage`, `indexedDB`, or cookie code.
@@ -224,13 +226,13 @@ Design tokens are declared at the top of `css/styles.css` under `:root`. Strengt
 - **Input hardening.** The analyzer input disables autocomplete, autocorrect, autocapitalisation, and spellcheck, and caps length at 128 characters to keep pattern scanning bounded.
 - **DOM safety.** User-facing recommendation text is inserted with `textContent`, not `innerHTML`, preventing injection.
 
-### Important limitation
+### ⚠️ Important limitation
 
 The score is an educational estimate, **not a guarantee against compromise**. Use a password manager, never reuse passwords, enable multi-factor authentication (preferably passkeys or hardware keys), and check whether your accounts have appeared in known breaches.
 
 ---
 
-## Browser support
+## 🌐 Browser support
 
 Tested against current versions of Chrome, Edge, Firefox, and Safari. Requires:
 
@@ -242,6 +244,10 @@ Older browsers will still run the analyzer; some glass effects may degrade grace
 
 ---
 
-## License
+## 📜 License
 
 This project is provided for educational use. You may adapt it for personal or commercial projects. Attribution is appreciated but not required.
+
+---
+
+<p align="center">Built with 🖤 by <strong>CY3ER-CAT</strong> 🐱</p>
