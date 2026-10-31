@@ -6,6 +6,10 @@ A local-first, cybersecurity-themed password strength analyzer built with plain 
 
 Everything runs in the browser. **No backend, no build step, no external libraries, no network requests, no storage, and no console logging of passwords.** 🚫🌐
 
+## 🖥️ Dashboard preview
+
+![Password Strength Analyzer dashboard](assets/dashboard.png)
+
 ---
 
 ## ✨ Features
